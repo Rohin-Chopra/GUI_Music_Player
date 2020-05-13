@@ -1,0 +1,53 @@
+4
+Sidhu Moosewala Hits
+Artist1
+Pop
+images/Moosewala.jpg
+5
+Old Skool
+songs/Old_Skool.wav
+Legend
+songs/Legend.mp3
+Dhakka
+songs/Dhakka.mp3
+Same Beef
+songs/Same_Beef.mp3
+Dollar
+songs/Dollar.mp3
+Parmish Verma Hits
+Parmish Verma
+Pop
+images/Parmish_Verma.jpg
+4
+Gaal Ni Kadni
+songs/Gaal_Ni_Kadni.mp3
+Kache Pakke Yaar
+songs/Kache_Pakke_Yaar.mp3
+Shada
+songs/Shada.mp3
+Sab Fade Jange
+songs/Sab_Fade_Jange.mp3
+Badshah Hits
+Artist1
+Pop
+images/Badshah.jpg
+4
+Genda Phool
+songs/Genda_Phool.mp3
+Kaala Chashma
+songs/Kaala_Chashma.mp3
+Wakhra Swag
+songs/Wakhra_Swag.mp3
+Mercy
+songs/Mercy.mp3
+Guru Randhawa Hits
+Guru Randhawa
+Pop
+images/Guru_Randhawa.jpg
+3
+High Rated Gabru
+songs/High_Rated_Gabru.mp3
+Lahore
+songs/Lahore.mp3
+Suit
+songs/Suit.mp3
