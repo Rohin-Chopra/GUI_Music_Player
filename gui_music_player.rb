@@ -4,7 +4,6 @@ require 'audioinfo'
 $GENRE_NAMES = %w[Null Pop Classic Jazz Rock]
 TOP_COLOR = Gosu::Color.new(0xFF1EB1FA)
 BOTTOM_COLOR = Gosu::Color.new(0xFF1D4DB5)
-
 # Defines the Zorder for the gosu
 module ZOrder
   BACKGROUND, PLAYER, UI = *0..2
@@ -57,9 +56,14 @@ class MusicPlayerMain < Gosu::Window
     albums = read_albums(music_file)
     @albums = albums
     @track_font = Gosu::Font.new(self, Gosu::default_font_name, 20)
-    @image_color = Gosu::Color.new(0xffffffff )
+    @image_color = Gosu::Color.new(0xffffffff)
+    @info_font = Gosu::Font.new(20)
+    @background1 = Gosu::Color.new(0xff181818)
 
-    @choice = 3
+    @background = Gosu::Color.new(0xff181818)
+    @background3 = Gosu::Color.new(0xff282828)
+    @choice = 0
+    @track_result = 0
     # Reads in an array of albums from a file
   end
 
@@ -112,69 +116,91 @@ class MusicPlayerMain < Gosu::Window
   # Draws the artwork on the screen for all the albums
 
   def draw_albums(albums)
-    if albums.length == 1
-      albums[0].artfile.bmp.draw_as_quad(50, 100, @image_color, 250, 100, @image_color, 50, 300, @image_color, 250, 300, @image_color,ZOrder::UI)
-    elsif albums.length == 2
-      albums[0].artfile.bmp.draw_as_quad(50, 100, @image_color, 250, 100, @image_color, 50, 300, @image_color, 250, 300, @image_color,ZOrder::UI)
-      albums[1].artfile.bmp.draw_as_quad(270, 100, @image_color, 470, 100, @image_color, 270, 300, @image_color, 470, 300, @image_color, ZOrder::UI)
-    elsif albums.length == 3
-      albums[0].artfile.bmp.draw_as_quad(50, 100, @image_color, 250, 100, @image_color, 50, 300, @image_color, 250, 300, @image_color,ZOrder::UI)
-      albums[1].artfile.bmp.draw_as_quad(270, 100, @image_color, 470, 100, @image_color, 270, 300, @image_color, 470, 300, @image_color, ZOrder::UI)
-      albums[2].artfile.bmp.draw_as_quad(50, 350, @image_color, 250, 350, @image_color, 50, 550, @image_color, 250, 550, @image_color, ZOrder::UI)
-    elsif albums.length == 4
-      albums[0].artfile.bmp.draw_as_quad(50, 100, @image_color, 250, 100, @image_color, 50, 300, @image_color, 250, 300, @image_color,ZOrder::UI)
-      albums[1].artfile.bmp.draw_as_quad(270, 100, @image_color, 470, 100, @image_color, 270, 300, @image_color, 470, 300, @image_color, ZOrder::UI)
-      albums[2].artfile.bmp.draw_as_quad(50, 350, @image_color, 250, 350, @image_color, 50, 550, @image_color, 250, 550, @image_color, ZOrder::UI)
-      albums[3].artfile.bmp.draw_as_quad(270, 350, @image_color, 470, 350, @image_color, 270, 550, @image_color, 470, 550, @image_color, ZOrder::UI)
+    i = 0
+    x1 = 50
+    y1 = 100
+    x2 = 250
+    y2 = 300
+    while i < albums.length
+      if i == 1
+        x1 += 220
+        x2 += 220
+      elsif i == 2
+        x1 = 50
+        x2 = 250
+        y1 += 220
+        y2 += 220
+      elsif i==3
+        x1+=220
+        x2+=220
+      end 
+      albums[i].artfile.bmp.draw_as_quad(x1, y1, @image_color, x2, y1, @image_color, x1, y2, @image_color, x2, y2, @image_color,ZOrder::UI)
+      i+=1
     end
   end
 
   # Detects if a 'mouse sensitive' area has been clicked on
   # i.e either an album or a track. returns true or false
 
+ 
   def area_clicked(leftX, topY, rightX, bottomY)
     if @albums.length == 1
       if leftX > 50 and topY > 100 and rightX < 250 and bottomY < 300
-        message = 'Album1'
+        @choice = 1
       end
     elsif @albums.length == 2
       if ((leftX > 50 and rightX < 250) and (topY > 100 and bottomY < 300))
-        message = 'Album1'
+        @choice = 0
       elsif((leftX > 270 and rightX < 470) and (topY > 100 and bottomY < 300))
-        message = 'Album2'
+        @choice = 1
       end  
     elsif @albums.length == 3
       if ((leftX > 50 and rightX < 250) and (topY > 100 and bottomY < 300))
-        message = 'Album1'
+        @choice = 0
       elsif((leftX > 270 and rightX < 470) and (topY > 100 and bottomY < 300))
-        message = 'Album2'  
+        @choice = 1
       elsif ((leftX > 50 and rightX < 250) and (topY > 350 and bottomY < 550))
-        message = 'Album3'
+        @choice = 2
       end  
     elsif @albums.length == 4
       if ((leftX > 50 and rightX < 250) and (topY > 100 and bottomY < 300))
-        message = 'Album1'
+        @choice = 0
       elsif((leftX > 270 and rightX < 470) and (topY > 100 and bottomY < 300))
-        message = 'Album2'  
+        @choice = 1
       elsif ((leftX > 50 and rightX < 250) and (topY > 350 and bottomY < 550))
-        message = 'Album3'
+        @choice = 2
       elsif((leftX > 270 and rightX < 470) and (topY > 350 and bottomY < 550))
-        message = 'Album4'
+        @choice = 3
       end  
     end
-    return message  
   end
 
+  def track_area_clicked(leftX, topY, rightX, bottomY)
+    i = 0
+    x1 = 690
+    x2 = 1000
+    y1 = 0
+    y2 = 40
+    while i < @albums[@choice].tracks.length
+        if((leftX > x1) and (topY > y1) and (rightX < x2) and (bottomY < y2))
+          return i.to_i
+        end
+        y1+=40
+        y2+=40
+        i+=1
+      end
+  end  
+ 
   # Takes a String title and an Integer ypos
-  # You may want to use the following:
+  # You may want to use the following:cx
   def display_track(title, ypos)
     #TrackLeftX
-    @track_font.draw(title,700 , ypos, ZOrder::PLAYER, 1.0, 1.0, Gosu::Color::WHITE)
+    @track_font.draw(title,700 , ypos, ZOrder::UI, 1.0, 1.0, Gosu::Color::WHITE)
   end
   def display_tracks()
     i = 0
     x = 0
-    ypos = 30
+    ypos = 15
       while x < @albums[@choice].tracks.length
         display_track(@albums[@choice].tracks[x].name, ypos)
         ypos += 35
@@ -185,30 +211,46 @@ class MusicPlayerMain < Gosu::Window
  
   def play_track(track, album)
       @song = Gosu::Song.new(album.tracks[track].location.chomp)
-      @song.play(false)
+      @song.play(false)  
   end
-
 
   # Draw a coloured background using TOP_COLOR and BOTTOM_/COLOR
 
   def draw_background
-    Gosu.draw_rect(0, 0, 1000, 600, Gosu::Color::BLACK, ZOrder::BACKGROUND, mode = :default)
+    draw_line(690 ,0, Gosu::Color::RED, 690, 600, Gosu::Color::RED, ZOrder::PLAYER, mode=:default)#Person's torso
+    Gosu.draw_rect(0, 0, 1000, 600, @background1 , ZOrder::BACKGROUND, mode = :default)
   end
 
   # Not used? Everything depends on mouse actions.
 
   def update
+ 
   end
 
-  def draw_buttons
-    
+  def draw_stuff()
+    i = 0
+    x1 = 0 
+    x2 = 60
+    while i < 15
+      draw_quad(690,x1, @background ,1000,x1, @background ,690,x2,@background ,1000,x2, @background , ZOrder::PLAYER)#House
+      x1+=40
+      x2+=40
+      draw_quad(690,x1, @background3 ,1000,x1, @background3 ,690,x2,@background3 ,1000,x2, @background3 , ZOrder::PLAYER)#House
+      x1+=40
+      x2+=40
+      i+=1
+    end  
+
   end  
   # Draws the album images and the track list for the selected album
 
   def draw
+    draw_stuff()
     draw_background()
     draw_albums(@albums)
     display_tracks()
+    @info_font.draw("mouse_x: #{mouse_x}", 200, 50, ZOrder::UI, 1.0, 1.0, Gosu::Color::WHITE)
+    @info_font.draw("mouse_y: #{mouse_y}", 350, 50, ZOrder::UI, 1.0, 1.0, Gosu::Color::WHITE)
   end
 
   def needs_cursor?
@@ -224,19 +266,7 @@ class MusicPlayerMain < Gosu::Window
     result  = area_clicked(mouse_x, mouse_y, mouse_x, mouse_y)
     case id
     when Gosu::MsLeft
-      if result == 'Album1'
-        @choice = 0
         play_track(0, @albums[@choice])
-      elsif result == 'Album2'
-        @choice = 1
-        play_track(0, @albums[@choice])
-      elsif result == 'Album3'
-        @choice = 2
-        play_track(0, @albums[@choice])
-      elsif result == 'Album4'
-        @choice = 3      
-        play_track(0, @albums[@choice])
-      end
     end
   end
 end
