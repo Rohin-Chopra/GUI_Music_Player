@@ -159,7 +159,7 @@ class MusicPlayerMain < Gosu::Window
         @choice = 0
       elsif((leftX > 270 and rightX < 470) and (topY > 100 and bottomY < 300))
         @choice = 1
-      elsif ((leftX > 50 and rightX < 250) and (topY > 350 and bottomY < 550))
+      elsif ((leftX > 50 and rightX < 250) and (topY > 350 and bottomY < 520))
         @choice = 2
       end  
     elsif @albums.length == 4
@@ -167,12 +167,13 @@ class MusicPlayerMain < Gosu::Window
         @choice = 0
       elsif((leftX > 270 and rightX < 470) and (topY > 100 and bottomY < 300))
         @choice = 1
-      elsif ((leftX > 50 and rightX < 250) and (topY > 350 and bottomY < 550))
+      elsif ((leftX > 50 and rightX < 250) and (topY > 350 and bottomY < 520))
         @choice = 2
-      elsif((leftX > 270 and rightX < 470) and (topY > 350 and bottomY < 550))
+      elsif((leftX > 270 and rightX < 470) and (topY > 350 and bottomY < 520))
         @choice = 3
       end  
     end
+    return @choice
   end
 
   def track_area_clicked(leftX, topY, rightX, bottomY)
@@ -185,22 +186,34 @@ class MusicPlayerMain < Gosu::Window
         if((leftX > x1) and (topY > y1) and (rightX < x2) and (bottomY < y2))
           return i.to_i
         end
-        y1+=40
-        y2+=40
+        y1+=35
+        y2+=35
         i+=1
       end
   end  
  
+  def draw_btns()
+    play = Gosu::Image.new('images/last.png')
+    play.draw(160 , 530, ZOrder::UI)
+  end  
+  def btn_click(x1,x2,y1,y2)
+    if((x1 > 200 and x2 < 235 ) and (y1 > 530 and y2 < 574))
+      @song.play
+    end
+    if((x1 > 274 and x2 < 328 ) and (y1 > 530 and y2 < 574))
+      @song.pause
+    end   
+  end  
   # Takes a String title and an Integer ypos
   # You may want to use the following:cx
   def display_track(title, ypos)
     #TrackLeftX
-    @track_font.draw(title,700 , ypos, ZOrder::UI, 1.0, 1.0, Gosu::Color::WHITE)
+    @track_font.draw(title,735 , ypos, ZOrder::UI, 1.0, 1.0, Gosu::Color::WHITE)
   end
   def display_tracks()
     i = 0
     x = 0
-    ypos = 15
+    ypos = 12
       while x < @albums[@choice].tracks.length
         display_track(@albums[@choice].tracks[x].name, ypos)
         ypos += 35
@@ -224,7 +237,6 @@ class MusicPlayerMain < Gosu::Window
   # Not used? Everything depends on mouse actions.
 
   def update
- 
   end
 
   def draw_stuff()
@@ -233,11 +245,11 @@ class MusicPlayerMain < Gosu::Window
     x2 = 60
     while i < 15
       draw_quad(690,x1, @background ,1000,x1, @background ,690,x2,@background ,1000,x2, @background , ZOrder::PLAYER)#House
-      x1+=40
-      x2+=40
+      x1+=35
+      x2+=35
       draw_quad(690,x1, @background3 ,1000,x1, @background3 ,690,x2,@background3 ,1000,x2, @background3 , ZOrder::PLAYER)#House
-      x1+=40
-      x2+=40
+      x1+=35
+      x2+=35
       i+=1
     end  
 
@@ -245,6 +257,10 @@ class MusicPlayerMain < Gosu::Window
   # Draws the album images and the track list for the selected album
 
   def draw
+    unless @track_result.nil?
+      draw_play()
+    end  
+    draw_btns()
     draw_stuff()
     draw_background()
     draw_albums(@albums)
@@ -257,16 +273,31 @@ class MusicPlayerMain < Gosu::Window
     true
   end
 
-  # If the button area (rectangle) has been clicked on change the background color
-  # also store the mouse_x and mouse_y attributes that we 'inherit' from Gosu
-  # you will learn about inheritance in the OOP unit - for now just accept that
-  # these are available and filled with the latest x and y locations of the mouse click.
+  def draw_play()
+    y1 = 10
+    y2 = 30
+    i = 0
+    spam = @track_result
+    spam+=1
+    while i < @track_result
+      y1 += 35
+      y2 += 35
+      i+=1
+    end  
+    mp = Gosu::Image.new('images/try.png')
+    mp.draw_as_quad(695, y1, @image_color, 715, y1, @image_color, 695, y2, @image_color, 715, y2, @image_color,ZOrder::UI)
+  end  
 
   def button_down(id)
-    result  = area_clicked(mouse_x, mouse_y, mouse_x, mouse_y)
+    area_clicked(mouse_x, mouse_y, mouse_x, mouse_y)
+    @track_result=track_area_clicked(mouse_x, mouse_y, mouse_x, mouse_y)
+    btn_click(mouse_x, mouse_x, mouse_y, mouse_y)
     case id
     when Gosu::MsLeft
-        play_track(0, @albums[@choice])
+      unless (@track_result.nil?)
+      play_track(@track_result, @albums[@choice])
+      puts(@track_result)
+      end
     end
   end
 end
